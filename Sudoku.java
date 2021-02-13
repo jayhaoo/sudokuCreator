@@ -1,55 +1,60 @@
 import java.util.Random;
 
 public class Sudoku {
-	// testing
-	//TODO: update setNumber to check if column, row and section works
+	int [][] board = new int [9][9];
+	int row = 0; 
+	int col = 0; 
+	int num = randomNumber();
 
-	int [][] board;
-	int row;
-	int col;
+	public static void main (String[] args) {
+		Sudoku sudoku = new Sudoku();
+		sudoku.fillBoard();
+		sudoku.printBoard(); 
+	} 
 
-	public Sudoku() {
-		board = new int[9][9];
-		row = 0;
-		col = 0;
-	}
-
-	public void setNumber(int row, int col, int num) {
-		if ((num > 0) && (num < 10)) {
-			this.board[row][col] = num;
-		} else {
-			System.out.println("Error: Can't set board[" + row + "][" + col + "] to " + num);
-		}
-	}
-
-	public int getNumber(int row, int col) {
-		return board[row][col];
+	public void fillBoard() {
+		for(int i = 0; i < 9; i++) 
+			for(int j = 0; j < 9; j++) 
+				board[i][j] = 0;
+		fillBoard(0,0);
 	}
 
 	public boolean fillBoard(int row, int col) {
-		int num = randomNumber();
-		if (board[8][8] != 0) {
-			return true;
-		}
-		/**
-		for (int i = 0; i < 9; i++) {
-			if ()
-		}
-		**/
-		return false;
-	}
+		num = randomNumber(); 
+		if(board[8][8] != 0) return true;
+
+		for(int i = 0; i < 9; i++) {
+			if(possibleMove(row,col,num)) {
+				board[row][col] = num;
+				if(col == 8) {
+					col = 0;
+					row++;
+					if(fillBoard(row,col)) return true;
+				} else {
+					col++;
+					if(fillBoard(row,col)) return true;
+				} 
+			}
+			num = num > 8 ? 1 : num + 1;
+		} 
+		board[row][col] = 0;
+		return false; 
+	} 	
 
 	public boolean possibleMove(int row, int col, int num) {
 		int sectionalRow = 0;
 		int sectionalCol = 0;
-		if (row > 2 && row < 6) {sectionalRow = 3;}
-		else if (row > 5) {sectionalRow = 6;}
-		if (col > 2 && col < 6) {sectionalCol = 3;}
-		else if (col > 5) {sectionalCol = 3;}
+
 		if ((num > 9) || (num < 1)) {
 			System.out.println("Error: Number needs to be between 1 - 9");
 			return false;
 		}
+
+		if (row > 2 && row < 6) {sectionalRow = 3;}
+		else if (row > 5) {sectionalRow = 6;}
+
+		if (col > 2 && col < 6) {sectionalCol = 3;}
+		else if (col > 5) {sectionalCol = 6;}
 
 		for (int i = 0; i < 9; i++) {
 			if (board[row][i] == num) return false;
@@ -67,14 +72,6 @@ public class Sudoku {
 		return true;
 	}
 
-	public void cleanBoard() {
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; i < 8; j++) {
-				this.board[i][j] = 0;
-			}
-		}
-	}
-
 	public int randomNumber() {
 		Random rand = new Random();
 		return rand.nextInt(9) + 1;
@@ -89,26 +86,11 @@ public class Sudoku {
 			if (i % 3 == 0) printHorizontalLine();
 			for (int j = 0; j < 9; j++) {
 				if (j % 3 == 0) System.out.print(" | ");
-				System.out.print(this.board[i][j] + " ");
+				System.out.print(board[i][j] + " ");
 			}
 			System.out.println("| ");
 		}
 		printHorizontalLine();
-	}
-
-	public static void main(String args[]) {
-		if (args.length == 1) {
-			System.out.println(args[0]);
-		}
-		
-		Sudoku sudoku = new Sudoku();
-		//sudoku.printBoard();
-		sudoku.setNumber(0,0,3);
-		sudoku.printBoard();
-		System.out.println(sudoku.possibleMove(3,1,3));
-		//sudoku.fillBoard(0,0);
-		//sudoku.setNumber(0,0,3);
-		//sudoku.printBoard();
 	}
 
 }
